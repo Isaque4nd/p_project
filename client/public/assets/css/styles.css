@@ -1,0 +1,458 @@
+/* Estilos para melhorar a visualização do QR Code */
+.qr-code-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    margin: 20px 0;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.qr-code-container h3 {
+    color: #ffffff;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.qr-code-container .qr-wrapper {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    display: inline-block;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: 3px solid #f8f9fa;
+}
+
+.qr-code-container img {
+    width: 250px;
+    height: 250px;
+    display: block;
+    border-radius: 5px;
+}
+
+.qr-code-container p {
+    color: #ffffff;
+    margin-top: 15px;
+    font-size: 14px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    opacity: 0.9;
+}
+
+/* Estilos para o código PIX */
+.pix-code {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    word-break: break-all;
+    font-family: 'Courier New', monospace;
+    backdrop-filter: blur(10px);
+}
+
+.pix-code strong {
+    color: #00ffff;
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.pix-code span {
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    border-radius: 5px;
+    display: block;
+    margin: 10px 0;
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+/* Botão de copiar melhorado */
+#copy-button {
+    background: linear-gradient(45deg, #00ffff, #ff006f);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+}
+
+#copy-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+}
+
+#copy-button:active {
+    transform: translateY(0);
+}
+
+/* Indicador de status melhorado */
+#status-indicator {
+    text-align: center;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+    font-weight: bold;
+    backdrop-filter: blur(10px);
+    border: 2px solid;
+    position: relative;
+    overflow: hidden;
+}
+
+#status-indicator::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+#status-indicator:hover::before {
+    left: 100%;
+}
+
+/* Seção de erro melhorada */
+#error-section {
+    background: rgba(255, 0, 0, 0.1);
+    color: #ff4444;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #ff4444;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+/* Seção de sucesso melhorada */
+#completed-section {
+    background: rgba(0, 255, 0, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #00ff00;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+/* Animações */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.payment-modal-body > div {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .qr-code-container {
+        padding: 15px;
+        margin: 15px 0;
+    }
+    
+    .qr-code-container img {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .pix-code {
+        padding: 15px;
+        font-size: 0.8em;
+    }
+    
+    #copy-button {
+        padding: 8px 16px;
+        font-size: 0.9em;
+    }
+}
+
+/* Melhorias gerais para o modal */
+.payment-modal-header {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    border-bottom: 2px solid rgba(0, 255, 255, 0.3);
+}
+
+.project-info {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, rgba(255, 0, 111, 0.1) 100%);
+    border: 2px solid rgba(0, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.instructions {
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 4px solid #00ffff;
+    backdrop-filter: blur(10px);
+}
+
+.instructions ol {
+    text-align: left;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Loading spinner melhorado */
+.loading-spinner {
+    border: 4px solid rgba(0, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid #00ffff;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+
+
+/* Estilos para o histórico de pagamentos melhorado */
+.payment-item {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.payment-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 255, 255, 0.15);
+    border-color: rgba(0, 255, 255, 0.3);
+}
+
+.payment-info h4 {
+    color: #00ffff;
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.payment-date, .payment-expire, .payment-method {
+    color: #ccc;
+    font-size: 0.9em;
+    margin: 5px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.payment-date i, .payment-expire i, .payment-method i {
+    color: #00ffff;
+    width: 16px;
+}
+
+.payment-expire.expired {
+    color: #ff6b6b;
+}
+
+.payment-expire.expired i {
+    color: #ff6b6b;
+}
+
+.payment-amount {
+    text-align: right;
+    margin: 10px 0;
+}
+
+.amount-label {
+    display: block;
+    color: #888;
+    font-size: 0.8em;
+    margin-bottom: 5px;
+}
+
+.amount-value {
+    color: #00ff9d;
+    font-size: 1.4em;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+}
+
+.payment-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.status-badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+}
+
+.status-badge.warning {
+    background: linear-gradient(45deg, #ffa500, #ff8c00);
+    color: white;
+    box-shadow: 0 2px 10px rgba(255, 165, 0, 0.3);
+}
+
+.status-badge.success {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    box-shadow: 0 2px 10px rgba(40, 167, 69, 0.3);
+}
+
+.status-badge.error {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    color: white;
+    box-shadow: 0 2px 10px rgba(220, 53, 69, 0.3);
+}
+
+.status-badge.secondary {
+    background: linear-gradient(45deg, #6c757d, #5a6268);
+    color: white;
+    box-shadow: 0 2px 10px rgba(108, 117, 125, 0.3);
+}
+
+.status-badge.expired {
+    background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+    color: white;
+    box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
+}
+
+.reopen-payment-btn, .new-payment-btn {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.reopen-payment-btn:hover, .new-payment-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.reopen-payment-btn:active, .new-payment-btn:active {
+    transform: translateY(0);
+}
+
+/* Responsividade para pagamentos */
+@media (max-width: 768px) {
+    .payment-item {
+        padding: 15px;
+    }
+    
+    .payment-status {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .reopen-payment-btn, .new-payment-btn {
+        width: 100%;
+        justify-content: center;
+        margin-top: 10px;
+    }
+    
+    .amount-value {
+        font-size: 1.2em;
+    }
+}
+
+/* Estados vazios melhorados */
+.no-payments, .no-projects {
+    text-align: center;
+    padding: 40px 20px;
+    color: #888;
+    background: rgba(255, 255, 255, 0.02);
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+.no-payments i, .no-projects i {
+    font-size: 3em;
+    color: #555;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.no-payments p, .no-projects p {
+    font-size: 1.1em;
+    margin: 0;
+}
+
+/* Animações suaves */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.payment-item {
+    animation: slideInUp 0.5s ease-out;
+}
+
+/* Melhorias para botões em geral */
+.btn {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #00ffff, #ff006f);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+}
+
+.btn-success {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+

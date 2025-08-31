@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prosperiuz - Redirecionando...</title>
+    <style>
+        body {
+            background: #000;
+            color: #ffd700;
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .loading {
+            text-align: center;
+        }
+        .spinner {
+            border: 3px solid rgba(255, 215, 0, 0.3);
+            border-top: 3px solid #ffd700;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading">
+        <div class="spinner"></div>
+        <p>Redirecionando...</p>
+    </div>
+    
+    <script>
+        // Verificar se já está logado
+        const token = localStorage.getItem('token');
+        if (token && token !== 'null' && token !== 'undefined') {
+            window.location.replace('/dashboard.html');
+        } else {
+            window.location.replace('/login.html');
+        }
+    </script>
+</body>
+</html>
+

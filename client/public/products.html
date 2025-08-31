@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todos os Produtos - Prosperiuz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #000000;
+            --bg-card: #1a1a1a;
+            --primary: #ffd700;
+            --secondary: #ffb347;
+            --text: #ffffff;
+            --background-color: #000000;
+            --text-light: #cccccc;
+            --accent: #daa520;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: var(--background-color, #000000);
+            color: var(--text);
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(18, 18, 18, 0.9) 0%, rgba(10, 10, 10, 1) 70%);
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            padding: 20px 0;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 60px 0;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .page-title h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px var(--primary);
+        }
+
+        .page-title p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        /* Filter Buttons */
+        .filter-section {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .filter-buttons {
+            display: inline-flex;
+            gap: 10px;
+            background: rgba(26, 26, 26, 0.8);
+            padding: 5px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .filter-btn {
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            color: var(--text-light);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .product-card {
+            background: rgba(26, 26, 26, 0.8);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.3);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: var(--bg-dark);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .product-icon {
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--primary);
+        }
+
+        .product-icon img {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .product-card h3 {
+            font-size: 1.4rem;
+            margin: 20px 0 15px;
+            color: var(--primary);
+        }
+
+        .product-description {
+            color: var(--text-light);
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .price {
+            margin: 20px 0;
+        }
+
+        .old-price {
+            color: var(--text-light);
+            text-decoration: line-through;
+            font-size: 1rem;
+            display: block;
+        }
+
+        .new-price {
+            color: var(--primary);
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .discount {
+            background: linear-gradient(45deg, var(--accent), #ff4444);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: inline-block;
+            margin: 15px 0;
+        }
+
+        .product-rating {
+            margin: 15px 0;
+        }
+
+        .stars {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            margin-bottom: 5px;
+        }
+
+        .stars i {
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .rating-text {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .product-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-cart {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 12px 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .btn-cart:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        .btn-buy {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border: none;
+            color: var(--bg-dark);
+            padding: 12px 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-weight: 600;
+        }
+
+        .btn-buy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+        }
+
+        .loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .page-title h1 {
+                font-size: 2rem;
+            }
+
+            .filter-buttons {
+                flex-wrap: wrap;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">Prosper<span>iuz</span></a>
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Voltar ao Início
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="page-title">
+                <h1>🚀 Todos os Produtos</h1>
+                <p>Explore nossa seleção completa de acessos premium</p>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">Todos</button>
+                    <button class="filter-btn" data-filter="streaming">Streaming</button>
+                    <button class="filter-btn" data-filter="ia">Inteligência Artificial</button>
+                    <button class="filter-btn" data-filter="design">Design & Criação</button>
+                    <button class="filter-btn" data-filter="producao">Produção</button>
+                    <button class="filter-btn" data-filter="combo">Combos</button>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid" id="products-grid">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Carregando produtos...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sample products data
+        const products = [
+            {
+                id: 1,
+                name: "Netflix Premium",
+                description: "Acesso completo a todos os filmes e séries em 4K",
+                category: "streaming",
+                oldPrice: 55.90,
+                newPrice: 15.90,
+                discount: "71% OFF",
+                badge: "🔥 MAIS VENDIDO",
+                image: "assets/images/netflix_logo.png",
+                rating: 4.8,
+                reviews: 127
+            },
+            {
+                id: 2,
+                name: "ChatGPT Plus",
+                description: "IA avançada para todas as suas necessidades",
+                category: "ia",
+                oldPrice: 20.00,
+                newPrice: 25.90,
+                discount: "MELHOR PREÇO",
+                badge: "⚡ EM ALTA",
+                image: "assets/images/chatgpt_logo.png",
+                rating: 4.9,
+                reviews: 89
+            },
+            {
+                id: 3,
+                name: "Canva Pro",
+                description: "Ferramenta completa de design profissional",
+                category: "design",
+                oldPrice: 40.00,
+                newPrice: 18.90,
+                discount: "52% OFF",
+                badge: "💎 PREMIUM",
+                image: "assets/images/canva_logo.png",
+                rating: 4.6,
+                reviews: 203
+            },
+            {
+                id: 4,
+                name: "Disney+ Ultra",
+                description: "Todo o universo Disney, Marvel, Star Wars e mais",
+                category: "streaming",
+                oldPrice: 43.90,
+                newPrice: 12.90,
+                discount: "70% OFF",
+                badge: "🎬 COMBO",
+                image: "assets/images/disney_logo.png",
+                rating: 4.7,
+                reviews: 156
+            },
+            {
+                id: 5,
+                name: "Prime Video",
+                description: "Filmes e séries Amazon + frete grátis",
+                category: "streaming",
+                oldPrice: 29.90,
+                newPrice: 9.90,
+                discount: "66% OFF",
+                badge: "📦 COMPLETO",
+                image: "assets/images/prime_logo.png",
+                rating: 4.5,
+                reviews: 98
+            },
+            {
+                id: 6,
+                name: "Spotify Premium",
+                description: "Música sem limites e sem anúncios",
+                category: "streaming",
+                oldPrice: 21.90,
+                newPrice: 8.90,
+                discount: "59% OFF",
+                badge: "🎵 MÚSICA",
+                image: "assets/images/spotify_logo.png",
+                rating: 4.8,
+                reviews: 312
+            },
+            {
+                id: 7,
+                name: "Midjourney",
+                description: "IA para criação de imagens incríveis",
+                category: "ia",
+                oldPrice: 30.00,
+                newPrice: 19.90,
+                discount: "33% OFF",
+                badge: "🎨 CRIATIVO",
+                image: "assets/images/midjourney_logo.png",
+                rating: 4.7,
+                reviews: 67
+            },
+            {
+                id: 8,
+                name: "Adobe Creative Cloud",
+                description: "Suite completa de ferramentas Adobe",
+                category: "design",
+                oldPrice: 150.00,
+                newPrice: 49.90,
+                discount: "66% OFF",
+                badge: "💼 PROFISSIONAL",
+                image: "assets/images/adobe_logo.png",
+                rating: 4.9,
+                reviews: 234
+            }
+        ];
+
+        let currentFilter = 'all';
+
+        function renderProducts(productsToRender = products) {
+            const grid = document.getElementById('products-grid');
+            
+            if (productsToRender.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                        <i class="fas fa-search" style="font-size: 3rem; opacity: 0.3; margin-bottom: 20px;"></i>
+                        <p style="color: var(--text-light); font-size: 1.1rem;">Nenhum produto encontrado</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = productsToRender.map(product => {
+                const stars = Array.from({length: 5}, (_, i) => 
+                    i < Math.floor(product.rating) ? 
+                    '<i class="fas fa-star"></i>' : 
+                    '<i class="far fa-star"></i>'
+                ).join('');
+
+                return `
+                    <div class="product-card" data-category="${product.category}">
+                        <div class="product-badge">${product.badge}</div>
+                        <div class="product-icon">
+                            <img src="${product.image}" alt="${product.name}" />
+                        </div>
+                        <h3>${product.name}</h3>
+                        <p class="product-description">${product.description}</p>
+                        <div class="price">
+                            <span class="old-price">R$ ${product.oldPrice.toFixed(2)}</span>
+                            <span class="new-price">R$ ${product.newPrice.toFixed(2)}</span>
+                        </div>
+                        <div class="discount">${product.discount}</div>
+                        <div class="product-rating">
+                            <div class="stars">
+                                ${stars}
+                            </div>
+                            <span class="rating-text">(${product.rating}) ${product.reviews} avaliações</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-cart" data-product="${product.name}" data-price="${product.newPrice}" data-image="${product.image}">
+                                <i class="fas fa-cart-plus"></i> Carrinho
+                            </button>
+                            <button class="btn-buy" data-product="${product.name}" data-price="${product.newPrice}">
+                                <i class="fas fa-bolt"></i> Comprar
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Add event listeners to new buttons
+            addButtonEventListeners();
+        }
+
+        function filterProducts(category) {
+            currentFilter = category;
+            const filtered = category === 'all' ? 
+                products : 
+                products.filter(product => product.category === category);
+            
+            renderProducts(filtered);
+        }
+
+        function addButtonEventListeners() {
+            // Cart buttons
+            document.querySelectorAll('.btn-cart').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const product = this.dataset.product;
+                    const price = this.dataset.price;
+                    const image = this.dataset.image;
+                    
+                    // Add to cart logic (similar to index.html)
+                    console.log('Adicionado ao carrinho:', { product, price, image });
+                    alert(`${product} adicionado ao carrinho!`);
+                });
+            });
+
+            // Buy buttons
+            document.querySelectorAll('.btn-buy').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const product = this.dataset.product;
+                    const price = this.dataset.price;
+                    
+                    // Buy now logic
+                    console.log('Comprar agora:', { product, price });
+                    alert(`Redirecionando para pagamento de ${product}`);
+                });
+            });
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate loading
+            setTimeout(() => {
+                renderProducts();
+            }, 1000);
+
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update active button
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Filter products
+                    const filter = this.dataset.filter;
+                    filterProducts(filter);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

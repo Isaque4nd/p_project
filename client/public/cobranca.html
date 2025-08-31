@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cobrança - BoaventuraDEV</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <style>
+        .charge-container {
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .charge-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .charge-header h1 {
+            color: #00ffff;
+            margin-bottom: 10px;
+        }
+
+        .charge-info {
+            background: rgba(0, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .charge-title {
+            font-size: 1.6em;
+            color: #00ffff;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .charge-description {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .charge-price {
+            font-size: 2.5em;
+            color: #ff006f;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .customer-form {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #00ffff;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .pay-button {
+            width: 100%;
+            background: linear-gradient(45deg, #00ffff, #ff006f);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .pay-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+        }
+
+        .pay-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .qr-section {
+            display: none;
+            text-align: center;
+            margin: 30px 0;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            color: #333;
+        }
+
+        .qr-code {
+            width: 250px;
+            height: 250px;
+            margin: 20px auto;
+            border: 2px solid #333;
+            border-radius: 10px;
+        }
+
+        .pix-code {
+            background: rgba(0, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            word-break: break-all;
+            font-family: monospace;
+            color: white;
+        }
+
+        .copy-button {
+            background: linear-gradient(45deg, #00ffff, #ff006f);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: transform 0.2s;
+        }
+
+        .copy-button:hover {
+            transform: scale(1.05);
+        }
+
+        .instructions {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #00ffff;
+        }
+
+        .instructions h3 {
+            color: #00ffff;
+            margin-bottom: 15px;
+        }
+
+        .instructions ol {
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        .loading {
+            text-align: center;
+            color: #00ffff;
+            padding: 50px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #00ffff;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff4444;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #ff4444;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .success-message {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #00ff00;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .status-indicator {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background: rgba(255, 165, 0, 0.2);
+            color: #ffa500;
+            border: 1px solid #ffa500;
+        }
+
+        .status-completed {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            border: 1px solid #00ff00;
+        }
+
+        .back-button {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            color: #00ffff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: 1px solid #00ffff;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            background: rgba(0, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .charge-container {
+                margin: 20px;
+                padding: 20px;
+            }
+            
+            .charge-price {
+                font-size: 2em;
+            }
+            
+            .qr-code {
+                width: 200px;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="charge-container">
+            <div class="charge-header">
+                <h1>💳 Pagamento</h1>
+                <p>Complete o pagamento via PIX</p>
+            </div>
+
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Carregando informações da cobrança...</p>
+            </div>
+
+            <div id="charge-content" style="display: none;">
+                <div class="charge-info">
+                    <div class="charge-title" id="charge-title"></div>
+                    <div class="charge-description" id="charge-description"></div>
+                    <div class="charge-price" id="charge-price"></div>
+                </div>
+
+                <div id="customer-form-section">
+                    <div class="customer-form">
+                        <h3 style="color: #00ffff; text-align: center; margin-bottom: 20px;">Seus Dados</h3>
+                        
+                        <div class="form-group">
+                            <label for="customer-name">Nome Completo *</label>
+                            <input type="text" id="customer-name" required placeholder="Digite seu nome completo">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customer-email">Email *</label>
+                            <input type="email" id="customer-email" required placeholder="Digite seu email">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customer-phone">Telefone (opcional)</label>
+                            <input type="tel" id="customer-phone" placeholder="(11) 99999-9999">
+                        </div>
+
+                        <button class="pay-button" onclick="processPayment()">
+                            <span id="pay-button-text">💳 Pagar via PIX</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="payment-section" style="display: none;">
+                    <div class="status-indicator status-pending">
+                        <span>⏳ Aguardando pagamento...</span>
+                    </div>
+
+                    <div class="qr-section" id="qr-section">
+                        <h3 style="color: #333;">Escaneie o QR Code</h3>
+                        <div class="qr-code" id="qr-code"></div>
+                    </div>
+
+                    <div class="pix-code">
+                        <strong>Código PIX (Copia e Cola):</strong><br>
+                        <span id="pix-code-text"></span>
+                        <button class="copy-button" onclick="copyPixCode()">Copiar</button>
+                    </div>
+
+                    <div class="instructions">
+                        <h3>Como pagar:</h3>
+                        <ol>
+                            <li>Abra o app do seu banco</li>
+                            <li>Escolha a opção PIX</li>
+                            <li>Escaneie o QR Code ou cole o código acima</li>
+                            <li>Confirme o pagamento</li>
+                            <li>Aguarde a confirmação (pode levar alguns minutos)</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div id="success-section" style="display: none;">
+                    <div class="success-message">
+                        <h3>🎉 Pagamento Confirmado!</h3>
+                        <p>Seu pagamento foi processado com sucesso. Obrigado!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="error-content" style="display: none;">
+                <div class="error-message" id="error-message"></div>
+                <div style="text-align: center;">
+                    <a href="/" class="back-button">Voltar ao Início</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script>
+        let chargeSlug = null;
+        let currentPayment = null;
+        let checkInterval = null;
+
+        // Obter slug da URL
+        const pathParts = window.location.pathname.split('/');
+        chargeSlug = pathParts[pathParts.length - 1];
+
+        if (!chargeSlug) {
+            showError('Cobrança não encontrada');
+        } else {
+            loadChargeInfo();
+        }
+
+        async function loadChargeInfo() {
+            try {
+                const response = await fetch(`/api/payments/charge/${chargeSlug}`);
+                const data = await response.json();
+
+                if (!data.success) {
+                    showError(data.message || 'Erro ao carregar cobrança');
+                    return;
+                }
+
+                const charge = data.charge;
+                
+                // Preencher informações da cobrança
+                document.getElementById('charge-title').textContent = charge.title;
+                document.getElementById('charge-description').textContent = charge.description;
+                document.getElementById('charge-price').textContent = `R$ ${charge.amount.toFixed(2)}`;
+
+                // Mostrar conteúdo
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('charge-content').style.display = 'block';
+
+            } catch (error) {
+                console.error('Erro ao carregar cobrança:', error);
+                showError('Erro de conexão');
+            }
+        }
+
+        async function processPayment() {
+            const customerName = document.getElementById('customer-name').value.trim();
+            const customerEmail = document.getElementById('customer-email').value.trim();
+            const customerPhone = document.getElementById('customer-phone').value.trim();
+
+            // Validar campos obrigatórios
+            if (!customerName || !customerEmail) {
+                showError('Nome e email são obrigatórios');
+                return;
+            }
+
+            // Validar email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(customerEmail)) {
+                showError('Email inválido');
+                return;
+            }
+
+            try {
+                // Mostrar loading no botão
+                const payButton = document.querySelector('.pay-button');
+                const payButtonText = document.getElementById('pay-button-text');
+                payButton.disabled = true;
+                payButtonText.innerHTML = '⏳ Processando...';
+
+                const response = await fetch(`/api/charges/${chargeSlug}/pay`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        customerName,
+                        customerEmail,
+                        customerPhone
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    showError(data.message || 'Erro ao processar pagamento');
+                    payButton.disabled = false;
+                    payButtonText.innerHTML = '💳 Pagar via PIX';
+                    return;
+                }
+
+                currentPayment = data.payment;
+                
+                // Mostrar seção de pagamento
+                document.getElementById('customer-form-section').style.display = 'none';
+                document.getElementById('payment-section').style.display = 'block';
+
+                // Configurar PIX
+                if (data.pix && data.pix.success) {
+                    setupPixPayment(data.pix);
+                    startPaymentCheck();
+                } else {
+                    showError('Erro ao gerar código PIX');
+                }
+
+            } catch (error) {
+                console.error('Erro ao processar pagamento:', error);
+                showError('Erro de conexão');
+                
+                // Restaurar botão
+                const payButton = document.querySelector('.pay-button');
+                const payButtonText = document.getElementById('pay-button-text');
+                payButton.disabled = false;
+                payButtonText.innerHTML = '💳 Pagar via PIX';
+            }
+        }
+
+        function setupPixPayment(pixData) {
+            // Configurar código PIX
+            document.getElementById('pix-code-text').textContent = pixData.pixCode;
+            
+            // Gerar QR Code
+            QRCode.toCanvas(document.getElementById('qr-code'), pixData.pixCode, {
+                width: 250,
+                margin: 2,
+                color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                }
+            });
+
+            document.getElementById('qr-section').style.display = 'block';
+        }
+
+        function startPaymentCheck() {
+            // Verificar status a cada 5 segundos
+            checkInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/api/payments/${currentPayment._id}`);
+                    const data = await response.json();
+                    
+                    if (data.success && data.payment.status === 'approved') {
+                        clearInterval(checkInterval);
+                        showSuccess();
+                    }
+                } catch (error) {
+                    console.error('Erro ao verificar status:', error);
+                }
+            }, 5000);
+        }
+
+        function showSuccess() {
+            document.getElementById('payment-section').style.display = 'none';
+            document.getElementById('success-section').style.display = 'block';
+        }
+
+        function copyPixCode() {
+            const pixCode = document.getElementById('pix-code-text').textContent;
+            navigator.clipboard.writeText(pixCode).then(() => {
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = 'Copiado!';
+                button.style.background = '#00ff00';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = 'linear-gradient(45deg, #00ffff, #ff006f)';
+                }, 2000);
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+                alert('Erro ao copiar. Selecione e copie manualmente.');
+            });
+        }
+
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('charge-content').style.display = 'none';
+            document.getElementById('error-message').textContent = message;
+            document.getElementById('error-content').style.display = 'block';
+        }
+
+        // Limpar interval quando sair da página
+        window.addEventListener('beforeunload', () => {
+            if (checkInterval) {
+                clearInterval(checkInterval);
+            }
+        });
+    </script>
+</body>
+</html>
+

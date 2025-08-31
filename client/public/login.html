@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Registro - Prosperiuz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #000000;
+            --bg-card: #1a1a1a;
+            --primary: #ffd700;
+            --secondary: #ffb347;
+            --text: #ffffff;
+            --text-light: #cccccc;
+            --accent: #daa520;
+            --error: #ff4444;
+            --success: #44ff44;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #111111 100%);
+            color: var(--text);
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .auth-header {
+            text-align: center;
+            padding: 40px 40px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--bg-dark);
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        .auth-header h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .auth-header p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .auth-body {
+            padding: 40px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 5px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border: none;
+            background: transparent;
+            color: var(--text-light);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .auth-tab.active {
+            background: var(--primary);
+            color: var(--bg-dark);
+            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 215, 0, 0.05);
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-light);
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border: none;
+            border-radius: 10px;
+            color: var(--bg-dark);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .auth-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .auth-button:active {
+            transform: translateY(0);
+        }
+
+        .auth-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .message.success {
+            background: rgba(68, 255, 68, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(68, 255, 68, 0.3);
+        }
+
+        .message.error {
+            background: rgba(255, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary);
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--secondary);
+            transform: translateX(-5px);
+        }
+
+        .back-link i {
+            margin-right: 8px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--bg-dark);
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                margin: 10px;
+            }
+            
+            .auth-header,
+            .auth-body {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <img src="/assets/images/prosperiuz_logo.png" alt="Prosperiuz" class="logo">
+            <h1>Prosperiuz</h1>
+            <p>Acesso Premium a Plataformas Digitais</p>
+        </div>
+        
+        <div class="auth-body">
+            <a href="/" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Voltar ao início
+            </a>
+
+            <div id="message" class="message"></div>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchTab('login')">Login</button>
+                <button class="auth-tab" onclick="switchTab('register')">Registrar</button>
+            </div>
+            
+            <!-- Formulário de Login -->
+            <form class="auth-form active" id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input 
+                        type="email" 
+                        id="loginEmail" 
+                        class="form-input" 
+                        placeholder="seu@email.com" 
+                        required
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Senha</label>
+                    <input 
+                        type="password" 
+                        id="loginPassword" 
+                        class="form-input" 
+                        placeholder="Sua senha" 
+                        required
+                    >
+                </div>
+                
+                <button type="submit" class="auth-button" id="loginButton">
+                    Entrar
+                </button>
+            </form>
+            
+            <!-- Formulário de Registro -->
+            <form class="auth-form" id="registerForm">
+                <div class="form-group">
+                    <label for="registerName">Nome Completo</label>
+                    <input 
+                        type="text" 
+                        id="registerName" 
+                        class="form-input" 
+                        placeholder="Seu nome completo" 
+                        required
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input 
+                        type="email" 
+                        id="registerEmail" 
+                        class="form-input" 
+                        placeholder="seu@email.com" 
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="registerWhatsapp">WhatsApp</label>
+                    <input 
+                        type="tel" 
+                        id="registerWhatsapp" 
+                        class="form-input" 
+                        placeholder="(11) 98888-7777" 
+                        required
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="registerPassword">Senha</label>
+                    <input 
+                        type="password" 
+                        id="registerPassword" 
+                        class="form-input" 
+                        placeholder="Crie uma senha forte" 
+                        required
+                        minlength="6"
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmar Senha</label>
+                    <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        class="form-input" 
+                        placeholder="Confirme sua senha" 
+                        required
+                        minlength="6"
+                    >
+                </div>
+                
+                <button type="submit" class="auth-button" id="registerButton">
+                    Criar Conta
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Configuração do Axios
+        axios.defaults.baseURL = window.location.origin;
+
+        // Verificar se já está logado
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            if (token && token !== 'null' && token !== 'undefined') {
+                // Verificar se o token é válido
+                verifyToken(token);
+            }
+        });
+
+        // Alternar entre tabs
+        function switchTab(tab) {
+            // Atualizar tabs
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+            
+            // Atualizar formulários
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            document.getElementById(`${tab}Form`).classList.add('active');
+            
+            // Limpar mensagens
+            hideMessage();
+        }
+
+        // Verificar token
+        async function verifyToken(token) {
+            try {
+                const response = await axios.get('/api/auth/me', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                
+                if (response.data.success) {
+                    const user = response.data.user;
+                    if (user.role === 'admin') {
+                        window.location.href = '/admin.html';
+                    } else {
+                        window.location.href = '/dashboard.html';
+                    }
+                }
+            } catch (error) {
+                localStorage.removeItem('token');
+            }
+        }
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const button = document.getElementById('loginButton');
+            
+            if (!email || !password) {
+                showMessage('Preencha todos os campos', 'error');
+                return;
+            }
+            
+            setLoading(button, true);
+            
+            try {
+                const response = await axios.post('/api/auth/login', {
+                    email,
+                    password
+                });
+                
+                if (response.data.success) {
+                    localStorage.setItem('token', response.data.token);
+                    showMessage('Login realizado com sucesso!', 'success');
+                    
+                    // Redirecionar baseado no papel do usuário
+                    setTimeout(() => {
+                        if (response.data.user.role === 'admin') {
+                            window.location.href = '/admin.html';
+                        } else {
+                            window.location.href = '/dashboard.html';
+                        }
+                    }, 1000);
+                } else {
+                    showMessage(response.data.message || 'Erro no login', 'error');
+                }
+            } catch (error) {
+                const message = error.response?.data?.message || 'Erro no servidor';
+                showMessage(message, 'error');
+            } finally {
+                setLoading(button, false);
+            }
+        });
+
+        // Registro
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const whatsapp = document.getElementById('registerWhatsapp').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const button = document.getElementById('registerButton');
+            
+            if (!name || !email || !whatsapp || !password || !confirmPassword) {
+                showMessage('Preencha todos os campos', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showMessage('As senhas não coincidem', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('A senha deve ter pelo menos 6 caracteres', 'error');
+                return;
+            }
+
+            // Validação simples de WhatsApp (DDD+Número 10 ou 11 dígitos)
+            const digits = whatsapp.replace(/\D/g, '');
+            if (digits.length < 10) {
+                showMessage('Informe um WhatsApp válido com DDD', 'error');
+                return;
+            }
+            
+            setLoading(button, true);
+            
+            try {
+                const response = await axios.post('/api/auth/register', {
+                    name,
+                    email,
+                    whatsapp,
+                    password
+                });
+                
+                if (response.data.success) {
+                    showMessage('Conta criada com sucesso! Fazendo login...', 'success');
+                    
+                    // Fazer login automático
+                    setTimeout(async () => {
+                        try {
+                            const loginResponse = await axios.post('/api/auth/login', {
+                                email,
+                                password
+                            });
+                            
+                            if (loginResponse.data.success) {
+                                localStorage.setItem('token', loginResponse.data.token);
+                                if (loginResponse.data.user.role === 'admin') {
+                                    window.location.href = '/admin.html';
+                                } else {
+                                    window.location.href = '/dashboard.html';
+                                }
+                            }
+                        } catch (loginError) {
+                            showMessage('Conta criada! Faça login para continuar.', 'success');
+                            switchTab('login');
+                        }
+                    }, 1000);
+                } else {
+                    showMessage(response.data.message || 'Erro no registro', 'error');
+                }
+            } catch (error) {
+                const message = error.response?.data?.message || 'Erro no servidor';
+                showMessage(message, 'error');
+            } finally {
+                setLoading(button, false);
+            }
+        });
+
+        // Máscara de WhatsApp
+        const whatsappInput = document.getElementById('registerWhatsapp');
+        whatsappInput.addEventListener('input', (e) => {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0,11);
+            if (v.length >= 7) {
+                e.target.value = `(${v.slice(0,2)}) ${v.slice(2, v.length === 11 ? 7 : 6)}-${v.slice(v.length === 11 ? 7 : 6)}`;
+            } else if (v.length >= 3) {
+                e.target.value = `(${v.slice(0,2)}) ${v.slice(2)}`;
+            } else if (v.length >= 1) {
+                e.target.value = `(${v`+`.slice(0,2)}`; // evita erro enquanto digita
+            }
+        });
+
+        // Mostrar mensagem
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            messageEl.style.display = 'block';
+            
+            // Auto-ocultar mensagens de sucesso
+            if (type === 'success') {
+                setTimeout(hideMessage, 5000);
+            }
+        }
+
+        // Ocultar mensagem
+        function hideMessage() {
+            const messageEl = document.getElementById('message');
+            messageEl.style.display = 'none';
+        }
+
+        // Loading state
+        function setLoading(button, loading) {
+            if (loading) {
+                button.disabled = true;
+                button.innerHTML += '<span class="loading"></span>';
+            } else {
+                button.disabled = false;
+                const loadingEl = button.querySelector('.loading');
+                if (loadingEl) {
+                    loadingEl.remove();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

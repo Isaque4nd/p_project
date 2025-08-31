@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combos - Prosperiuz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #000000;
+            --bg-card: #1a1a1a;
+            --primary: #ffd700;
+            --secondary: #ffb347;
+            --text: #ffffff;
+            --text-light: #cccccc;
+            --accent: #daa520;
+            --success: #28a745;
+            --error: #dc3545;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: var(--bg-dark);
+            color: var(--text);
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(18, 18, 18, 0.9) 0%, rgba(10, 10, 10, 1) 70%);
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            padding: 20px 0;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .nav-menu a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-menu a:hover {
+            color: var(--primary);
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .cart-icon {
+            position: relative;
+            color: var(--primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--error);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        /* Main Content */
+        main {
+            padding: 40px 0;
+        }
+        
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .page-title h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px var(--primary);
+        }
+        
+        .page-title p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+        
+        /* Filters */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--primary);
+            color: var(--text);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary);
+            color: var(--bg-dark);
+            box-shadow: 0 0 15px var(--primary);
+        }
+        
+        /* Combos Grid */
+        .combos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .combo-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .combo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        }
+        
+        .combo-image {
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .combo-image img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+        
+        .discount-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--error);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .combo-content {
+            padding: 20px;
+        }
+        
+        .combo-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .combo-description {
+            color: var(--text-light);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .combo-products {
+            margin-bottom: 20px;
+        }
+        
+        .combo-products h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        
+        .product-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .product-item {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            padding-left: 15px;
+            position: relative;
+        }
+        
+        .product-item::before {
+            content: '•';
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+        }
+        
+        .combo-pricing {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .original-price {
+            color: var(--text-light);
+            text-decoration: line-through;
+            font-size: 1.1rem;
+        }
+        
+        .combo-price {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .savings {
+            background: var(--success);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .combo-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: var(--bg-dark);
+            flex: 1;
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            flex: 1;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        
+        .loading i {
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .page-title h1 {
+                font-size: 2rem;
+            }
+            
+            .combos-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters {
+                gap: 10px;
+            }
+            
+            .filter-btn {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">PROSPERIUZ</a>
+                
+                <nav class="nav-menu">
+                    <a href="/">Início</a>
+                    <a href="/products.html">Produtos</a>
+                    <a href="/combos.html" style="color: var(--primary);">Combos</a>
+                    <a href="/dashboard.html">Dashboard</a>
+                </nav>
+                
+                <div class="user-actions">
+                    <div class="cart-icon" id="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" id="cart-badge">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="page-title">
+                <h1>Combos Especiais</h1>
+                <p>Economize mais comprando nossos combos exclusivos</p>
+            </div>
+
+            <div class="filters">
+                <button class="filter-btn active" data-category="all">Todos</button>
+                <button class="filter-btn" data-category="streaming">Streaming</button>
+                <button class="filter-btn" data-category="design">Design</button>
+                <button class="filter-btn" data-category="productivity">Produtividade</button>
+                <button class="filter-btn" data-category="ai">Inteligência Artificial</button>
+            </div>
+
+            <div id="combos-container">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i>
+                    Carregando combos...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let allCombos = [];
+        let currentFilter = 'all';
+
+        // Carregar combos
+        async function loadCombos() {
+            try {
+                const response = await fetch('/api/combos');
+                const data = await response.json();
+
+                if (data.success) {
+                    allCombos = data.data;
+                    renderCombos(allCombos);
+                } else {
+                    showError('Erro ao carregar combos');
+                }
+            } catch (error) {
+                console.error('Erro ao carregar combos:', error);
+                showError('Erro de conexão');
+            }
+        }
+
+        // Renderizar combos
+        function renderCombos(combos) {
+            const container = document.getElementById('combos-container');
+
+            if (combos.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-gift"></i>
+                        <h3>Nenhum combo encontrado</h3>
+                        <p>Não há combos disponíveis no momento.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const combosHTML = combos.map(combo => `
+                <div class="combo-card" data-category="${combo.category?.slug || 'other'}">
+                    <div class="combo-image">
+                        ${combo.image ? `<img src="${combo.image}" alt="${combo.name}">` : ''}
+                        ${combo.discount > 0 ? `<div class="discount-badge">-${combo.discount}%</div>` : ''}
+                    </div>
+                    <div class="combo-content">
+                        <h3 class="combo-title">${combo.name}</h3>
+                        <p class="combo-description">${combo.description}</p>
+                        
+                        <div class="combo-products">
+                            <h4>Inclui:</h4>
+                            <div class="product-list">
+                                ${combo.products.map(item => `
+                                    <div class="product-item">
+                                        ${item.quantity}x ${item.product.title}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div class="combo-pricing">
+                            <span class="original-price">R$ ${combo.originalPrice.toFixed(2)}</span>
+                            <span class="combo-price">R$ ${combo.comboPrice.toFixed(2)}</span>
+                            ${combo.savings > 0 ? `<span class="savings">Economize R$ ${combo.savings.toFixed(2)}</span>` : ''}
+                        </div>
+                        
+                        <div class="combo-actions">
+                            <button class="btn btn-primary" onclick="addComboToCart('${combo._id}')">
+                                <i class="fas fa-shopping-cart"></i> Adicionar ao Carrinho
+                            </button>
+                            <button class="btn btn-secondary" onclick="buyComboNow('${combo._id}')">
+                                <i class="fas fa-bolt"></i> Comprar Agora
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `<div class="combos-grid">${combosHTML}</div>`;
+        }
+
+        // Filtrar combos
+        function filterCombos(category) {
+            currentFilter = category;
+            
+            // Atualizar botões ativos
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+
+            // Filtrar e renderizar
+            const filteredCombos = category === 'all' 
+                ? allCombos 
+                : allCombos.filter(combo => combo.category?.slug === category);
+            
+            renderCombos(filteredCombos);
+        }
+
+        // Adicionar combo ao carrinho
+        async function addComboToCart(comboId) {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Faça login para adicionar combos ao carrinho');
+                window.location.href = '/';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ comboId, quantity: 1 })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('Combo adicionado ao carrinho!', 'success');
+                    updateCartBadge();
+                } else {
+                    showMessage(data.message || 'Erro ao adicionar combo', 'error');
+                }
+            } catch (error) {
+                console.error('Erro ao adicionar combo:', error);
+                showMessage('Erro de conexão', 'error');
+            }
+        }
+
+        // Comprar combo agora
+        async function buyComboNow(comboId) {
+            await addComboToCart(comboId);
+            window.location.href = '/payment.html';
+        }
+
+        // Mostrar mensagem
+        function showMessage(message, type = 'info') {
+            // Implementar sistema de notificações
+            alert(message);
+        }
+
+        // Mostrar erro
+        function showError(message) {
+            const container = document.getElementById('combos-container');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle" style="color: var(--error);"></i>
+                    <h3>Erro</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // Atualizar badge do carrinho
+        function updateCartBadge() {
+            // Implementar contagem do carrinho
+            const badge = document.getElementById('cart-badge');
+            const cart = JSON.parse(localStorage.getItem('prosperiuz_cart')) || [];
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            badge.textContent = totalItems;
+            badge.style.display = totalItems > 0 ? 'flex' : 'none';
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCombos();
+            updateCartBadge();
+
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterCombos(this.dataset.category);
+                });
+            });
+
+            // Cart icon
+            document.getElementById('cart-icon').addEventListener('click', function() {
+                // Implementar modal do carrinho ou redirecionar
+                window.location.href = '/payment.html';
+            });
+        });
+    </script>
+</body>
+</html>

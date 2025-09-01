@@ -125,7 +125,7 @@ const initializeDefaultConfigs = async () => {
       },
       {
         key: 'PAYMENT_PROVIDER',
-        value: 'sacapay',
+        value: 'mercadopago',
         description: 'Provedor de pagamento (sacapay, mercadopago)',
         category: 'payment',
         sensitive: false

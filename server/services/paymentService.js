@@ -107,13 +107,15 @@ class PaymentService {
       });
 
       if (response.data.id) {
+        const qrCodeBase64 = response.data.point_of_interaction?.transaction_data?.qr_code_base64;
         return {
           success: true,
           provider: 'mercadopago',
           paymentId: response.data.id,
           pixCode: response.data.point_of_interaction?.transaction_data?.qr_code,
-          pixKey: response.data.point_of_interaction?.transaction_data?.qr_code_base64,
-          qrCode: response.data.point_of_interaction?.transaction_data?.qr_code_base64,
+          pixKey: response.data.point_of_interaction?.transaction_data?.qr_code,
+          qrCodeUrl: qrCodeBase64 ? `data:image/png;base64,${qrCodeBase64}` : null,
+          qrCode: qrCodeBase64,
           expiresAt: response.data.date_of_expiration,
           amount: response.data.transaction_amount,
           status: response.data.status

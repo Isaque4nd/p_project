@@ -138,7 +138,48 @@ exports.getUserPayments = async (req, res) => {
 // Processar webhook do SacaPay
 exports.processWebhook = async (req, res) => {
   try {
-    const { transaction_id, status, amount } = req.body;
+    const body = req.body;
+
+    // Verificar se é webhook do Mercado Pago
+    if (body.action && body.data && body.data.id) {
+      // Webhook do Mercado Pago
+      const paymentId = body.data.id;
+      const action = body.action;
+
+      if (action === 'payment.updated') {
+        // Buscar pagamento pelo paymentId
+        const payment = await Payment.findOne({ paymentId: paymentId });
+        
+        if (!payment) {
+          return res.status(404).json({
+            success: false,
+            message: 'Pagamento não encontrado'
+          });
+        }
+
+        // Buscar status atual do pagamento no Mercado Pago
+        const paymentService = require('../services/paymentService');
+        const statusResponse = await paymentService.checkMercadoPagoStatus(paymentId);
+
+        if (statusResponse.success) {
+          payment.status = statusResponse.status === 'approved' ? 'approved' : statusResponse.status === 'pending' ? 'pending' : 'failed';
+          payment.paidAt = statusResponse.status === 'approved' ? new Date() : null;
+          await payment.save();
+
+          if (statusResponse.status === 'approved') {
+            console.log(`Pagamento aprovado para usuário ${payment.user}, projeto ${payment.project}`);
+          }
+        }
+      }
+
+      return res.json({
+        success: true,
+        message: 'Webhook Mercado Pago processado'
+      });
+    }
+
+    // Webhook do Sacapay (fallback)
+    const { transaction_id, status, amount } = body;
 
     // Buscar pagamento pelo sacapayId
     const payment = await Payment.findOne({ sacapayId: transaction_id });
